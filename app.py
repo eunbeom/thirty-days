@@ -3,10 +3,10 @@ import os
 from datetime import datetime
 
 import gspread
-from flask import Flask, request, json
+from flask import Flask, request, json, render_template
 from gspread import WorksheetNotFound
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
@@ -64,22 +64,27 @@ def handle_text_message(event):
     col = now.day + 2
     time_text = '{0:02d}:{1:02d}'.format(now.hour, now.minute)
 
+    if event.source.type == 'group':
+        profile = line_bot_api.get_group_member_profile(group_id, event.source.user_id)
+    else:
+        profile = line_bot_api.get_room_member_profile(group_id, event.source.user_id)
+
     if event.source.user_id in users:
         sheet.update_cell(users.index(event.source.user_id) + 1, col, time_text)
     else:
-        if event.source.type == 'group':
-            profile = line_bot_api.get_group_member_profile(group_id, event.source.user_id)
-        else:
-            profile = line_bot_api.get_room_member_profile(group_id, event.source.user_id)
-
         sheet.update_cell(len(users) + 1, 1, event.source.user_id)
         sheet.update_cell(len(users) + 1, 2, profile.display_name)
         sheet.update_cell(len(users) + 1, col, time_text)
         users.append(event.source.user_id)
 
     row = users.index(event.source.user_id) + 1
-    count = sum(1 for cell in sheet.range(row, 3, row, 33) if cell.value != '')
-    line_bot_api.reply_message(event.reply_token, TextSendMessage('{}회 달성!'.format(count)))
+    cells = sheet.range(row, 3, row, 33)
+    count = sum(1 for cell in cells if cell.value)
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(f'{count}회 달성!'))
+
+    if '#테스트' in event.message.text:
+        contents = render_template('flex.json', display_name=profile.display_name, count=count, cells=cells)
+        line_bot_api.reply_message(event.reply_token, FlexSendMessage(f'{count}회 달성!', contents))
 
 
 if __name__ == "__main__":
