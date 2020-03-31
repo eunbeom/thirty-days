@@ -1,0 +1,4 @@
+line-bot-sdk
+flask
+gspread
+oauth2client
