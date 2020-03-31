@@ -80,11 +80,12 @@ def handle_text_message(event):
     row = users.index(event.source.user_id) + 1
     cells = sheet.range(row, 3, row, 33)
     count = sum(1 for cell in cells if cell.value)
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(f'{count}회 달성!'))
 
     if '#테스트' in event.message.text:
         contents = render_template('flex.json', display_name=profile.display_name, count=count, cells=cells)
         line_bot_api.reply_message(event.reply_token, FlexSendMessage(f'{count}회 달성!', contents))
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(f'{count}회 달성!'))
 
 
 if __name__ == "__main__":
