@@ -83,6 +83,7 @@ def handle_text_message(event):
 
     if '#테스트' in event.message.text:
         contents = render_template('flex.json', display_name=profile.display_name, count=count, cells=cells)
+        print(contents)
         line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f'{count}회 달성!', contents=contents))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(f'{count}회 달성!'))
