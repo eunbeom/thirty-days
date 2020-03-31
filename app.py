@@ -15,7 +15,7 @@ line_bot_api = LineBotApi(os.environ['LINE_CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 
 scopes = 'https://www.googleapis.com/auth/spreadsheets'
-credentials = json.load(os.environ['CREDENTIALS'])
+credentials = json.loads(os.environ['CREDENTIALS'])
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials, scopes)
 
 
