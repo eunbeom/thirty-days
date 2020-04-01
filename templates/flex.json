@@ -30,7 +30,7 @@
           {% elif cells[day - 1].value %}
           {
             "type": "image",
-            "url": "https://thirty-days.herokuapp.com/static/check.png"
+            "url": "https://raw.githubusercontent.com/eunbeom/thirty-days/master/static/check.png"
           }
           {% else %}
           {
