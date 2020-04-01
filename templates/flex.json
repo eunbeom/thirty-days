@@ -30,7 +30,7 @@
           },
           {
             "type": "text",
-            "text": "{{ 1 if cells[0].value else ' ' }} ",
+            "text": "{{ 1 if cells[0].value else ' ' }}",
             "align": "center"
           },
           {
