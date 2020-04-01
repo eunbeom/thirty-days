@@ -37,6 +37,7 @@
             "type": "text",
             "text": "{{ day }}",
             "align": "center",
+            "gravity": "center",
             "size": "sm"
             {% if day in [5,12,15,19,26,30] %},
             "color": "#ff0000"
