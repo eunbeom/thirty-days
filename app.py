@@ -6,7 +6,7 @@ import gspread
 from flask import Flask, request, json, render_template
 from gspread import WorksheetNotFound
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
+from linebot.models import MessageEvent, TextMessage, FlexSendMessage
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
@@ -81,11 +81,8 @@ def handle_text_message(event):
     cells = sheet.range(row, 3, row, 33)
     count = sum(1 for cell in cells if cell.value)
 
-    if '#테스트' in event.message.text:
-        contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, cells=cells))
-        line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f'{count}회 달성!', contents=contents))
-    else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(f'{count}회 달성!'))
+    contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, cells=cells))
+    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f'{count}회 달성!', contents=contents))
 
 
 if __name__ == "__main__":
