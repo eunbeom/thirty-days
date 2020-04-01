@@ -8,12 +8,12 @@
       {
         "type": "text",
         "text": "{{ count }}회 달성!",
-        "size": "lg",
         "weight": "bold"
       },
       {
         "type": "text",
-        "text": "{{ display_name }}"
+        "text": "{{ display_name }}",
+        "size": "sm"
       },
       {
         "type": "box",
@@ -31,22 +31,26 @@
           {
             "type": "text",
             "text": "{{ 1 if cells[0].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 2 if cells[1].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 3 if cells[2].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 4 if cells[3].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           }
         ],
         "margin": "md"
@@ -59,37 +63,44 @@
             "type": "text",
             "text": "{{ 5 if cells[4].value else ' ' }}",
             "align": "center",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 6 if cells[5].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 7 if cells[6].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 8 if cells[7].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 9 if cells[8].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 10 if cells[9].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 11 if cells[10].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           }
         ]
       },
@@ -101,38 +112,45 @@
             "type": "text",
             "text": "{{ 12 if cells[11].value else ' ' }}",
             "align": "center",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 13 if cells[12].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 14 if cells[13].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 15 if cells[14].value else ' ' }}",
             "align": "center",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 16 if cells[15].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 17 if cells[16].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 18 if cells[17].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           }
         ]
       },
@@ -144,37 +162,44 @@
             "type": "text",
             "text": "{{ 19 if cells[18].value else ' ' }}",
             "align": "center",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 20 if cells[19].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 21 if cells[20].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 22 if cells[21].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 23 if cells[22].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 24 if cells[23].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 25 if cells[24].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           }
         ]
       },
@@ -186,28 +211,33 @@
             "type": "text",
             "text": "{{ 26 if cells[25].value else ' ' }}",
             "align": "center",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 27 if cells[26].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 28 if cells[27].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 29 if cells[28].value else ' ' }}",
-            "align": "center"
+            "align": "center",
+            "size": "sm"
           },
           {
             "type": "text",
             "text": "{{ 30 if cells[29].value else ' ' }}",
             "align": "center",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "size": "sm"
           },
           {
             "type": "filler"
@@ -218,5 +248,6 @@
         ]
       }
     ]
-  }
+  },
+  "size": "micro"
 }
