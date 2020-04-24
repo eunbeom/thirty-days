@@ -27,7 +27,7 @@
           {
             "type": "filler"
           }
-          {% elif cells[day - 1].value %}
+          {% elif days[day - 1] == 'O' %}
           {
             "type": "image",
             "url": "https://raw.githubusercontent.com/eunbeom/thirty-days/master/static/check.png"

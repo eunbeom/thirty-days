@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 import os
+from calendar import monthrange
 from datetime import datetime
 
-import gspread
+import redis as redis
 from flask import Flask, request, json, render_template
-from gspread import WorksheetNotFound
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage
-from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(os.environ['LINE_CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 
-scopes = 'https://www.googleapis.com/auth/spreadsheets'
-credentials = json.loads(os.environ['CREDENTIALS'])
-credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials, scopes)
+r = redis.from_url(os.environ.get("REDIS_URL"))
 
 
 @app.route("/callback", methods=['POST'])
@@ -37,52 +34,26 @@ def handle_text_message(event):
     if '#인증' not in event.message.text:
         return
 
-    client = gspread.authorize(credentials)
-
-    spreadsheet = client.open_by_url(os.environ['SPREADSHEETS_URL'])
-
     if event.source.type == 'group':
         group_id = event.source.group_id
     elif event.source.type == 'room':
         group_id = event.source.room_id
     else:
-        return
+        group_id = event.source.user_id
 
-    try:
-        sheet = spreadsheet.worksheet(group_id)
-    except WorksheetNotFound:
-        sheet = spreadsheet.add_worksheet(group_id, 1000, 33)
-        cells = sheet.range(1, 1, 1, 33)
-        cells[0].value = 'user_id'
-        cells[1].value = '이름'
-        for i in range(31):
-            cells[2 + i].value = '{0}일'.format(i + 1)
-        sheet.update_cells(cells)
-
-    users = sheet.col_values(1)
     now = datetime.now()
-    col = now.day + 2
-    time_text = '{0:02d}:{1:02d}'.format(now.hour, now.minute)
+    weekday, number_of_days = monthrange(now.year, now.month)
 
-    if event.source.type == 'group':
-        profile = line_bot_api.get_group_member_profile(group_id, event.source.user_id)
-    else:
-        profile = line_bot_api.get_room_member_profile(group_id, event.source.user_id)
+    key = f'{{{group_id}}}:{{{event.source.user_id}}}{{{now.year}-{now.month}}}'
+    days = r.get(key) if r.exists(key) else ' ' * number_of_days
+    days[now.day - 1] = 'O'
+    count = days.count('O')
 
-    if event.source.user_id in users:
-        sheet.update_cell(users.index(event.source.user_id) + 1, col, time_text)
-    else:
-        sheet.update_cell(len(users) + 1, 1, event.source.user_id)
-        sheet.update_cell(len(users) + 1, 2, profile.display_name)
-        sheet.update_cell(len(users) + 1, col, time_text)
-        users.append(event.source.user_id)
+    r.set(key, days)
 
-    row = users.index(event.source.user_id) + 1
-    cells = sheet.range(row, 3, row, 33)
-    count = sum(1 for cell in cells if cell.value)
-
-    contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, cells=cells))
-    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f'{count}회 달성!', contents=contents))
+    profile = line_bot_api.get_profile(group_id)
+    contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, days=days))
+    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f"{count}회 달성!", contents=contents))
 
 
 if __name__ == "__main__":
