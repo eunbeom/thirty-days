@@ -45,8 +45,9 @@ def handle_text_message(event):
     weekday, number_of_days = monthrange(now.year, now.month)
 
     key = f'{{{group_id}}}:{{{event.source.user_id}}}{{{now.year}-{now.month}}}'
-    days = r.get(key) if r.exists(key) else ' ' * number_of_days
+    days = r.get(key) if r.exists(key) else 'X' * number_of_days
     days = f'{days[:now.day - 1]}O{days[now.day:]}'
+    print(days)
     count = days.count('O')
 
     r.set(key, days)
