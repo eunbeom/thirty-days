@@ -36,17 +36,19 @@ def handle_text_message(event):
 
     if event.source.type == 'group':
         group_id = event.source.group_id
+        print('group')
     elif event.source.type == 'room':
         group_id = event.source.room_id
+        print('room')
     else:
         group_id = event.source.user_id
+        print('user')
 
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
     key = f'{{{group_id}}}:{{{event.source.user_id}}}{{{now.year}-{now.month}}}'
-    # days = r.get(key) if r.exists(key) else 'X' * number_of_days
-    days = 'X' * number_of_days
+    days = r.get(key) if r.exists(key) else 'X' * number_of_days
     days = f'{days[:now.day - 1]}O{days[now.day:]}'
     print(days)
     count = days.count('O')
