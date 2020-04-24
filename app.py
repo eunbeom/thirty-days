@@ -13,7 +13,7 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.environ['LINE_CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 
-r = redis.from_url(os.environ.get("REDIS_URL"))
+r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
 
 
 @app.route("/callback", methods=['POST'])
@@ -45,7 +45,8 @@ def handle_text_message(event):
     weekday, number_of_days = monthrange(now.year, now.month)
 
     key = f'{{{group_id}}}:{{{event.source.user_id}}}{{{now.year}-{now.month}}}'
-    days = r.get(key) if r.exists(key) else 'X' * number_of_days
+    # days = r.get(key) if r.exists(key) else 'X' * number_of_days
+    days = 'X' * number_of_days
     days = f'{days[:now.day - 1]}O{days[now.day:]}'
     print(days)
     count = days.count('O')
