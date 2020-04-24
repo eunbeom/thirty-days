@@ -16,7 +16,7 @@ handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
 
 
-@app.route("/", methods=['POST'])
+@app.route("/callback", methods=['POST'])
 def callback():
     handler.handle(request.get_data(as_text=True), request.headers['X-Line-Signature'])
     return 'OK'
