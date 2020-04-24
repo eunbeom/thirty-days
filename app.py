@@ -46,7 +46,7 @@ def handle_text_message(event):
 
     key = f'{{{group_id}}}:{{{event.source.user_id}}}{{{now.year}-{now.month}}}'
     days = r.get(key) if r.exists(key) else ' ' * number_of_days
-    days[now.day - 1] = 'O'
+    days = days[:now.day - 1] + 'O' + days[now.day:]
     count = days.count('O')
 
     r.set(key, days)
