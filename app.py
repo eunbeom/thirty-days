@@ -54,6 +54,7 @@ def handle_text_message(event):
     r.set(key, days)
 
     profile = line_bot_api.get_profile(event.source.user_id)
+    print(profile)
     contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, days=days))
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f"{count}회 달성!", contents=contents))
 
