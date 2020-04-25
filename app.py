@@ -42,7 +42,7 @@ def handle_text_message(event):
         profile = line_bot_api.get_room_member_profile(event.source.user_id)
     elif event.source.type == 'user':
         group_id = event.source.user_id
-        profile = None
+        profile = line_bot_api.get_profile(event.source.user_id)
     else:
         return
 
@@ -56,8 +56,7 @@ def handle_text_message(event):
 
     r.set(key, days)
 
-    contents = json.loads(
-        render_template('flex.json', display_name=profile.display_name if profile else '', count=count, days=days))
+    contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, days=days))
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f"{count}회 달성!", contents=contents))
 
 
