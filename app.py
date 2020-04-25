@@ -36,10 +36,10 @@ def handle_text_message(event):
 
     if event.source.type == 'group':
         group_id = event.source.group_id
-        profile = line_bot_api.get_group_member_profile(event.source.user_id)
+        profile = line_bot_api.get_group_member_profile(event.source.group_id, event.source.user_id)
     elif event.source.type == 'room':
         group_id = event.source.room_id
-        profile = line_bot_api.get_room_member_profile(event.source.user_id)
+        profile = line_bot_api.get_room_member_profile(event.source.room_id, event.source.user_id)
     elif event.source.type == 'user':
         group_id = event.source.user_id
         profile = line_bot_api.get_profile(event.source.user_id)
