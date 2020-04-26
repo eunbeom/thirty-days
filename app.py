@@ -53,8 +53,8 @@ def handle_text_message(event):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
-    key_name = f'{group_id}:{event.source.user_id}:{profile.display_name}'
-    key_days = f'{group_id}:{event.source.user_id}:{now.year}-{now.month}'
+    key_name = f'{group_id}:{event.source.user_id}:display_name'
+    key_days = f'{group_id}:{event.source.user_id}:{now.year}-{now.month:02d}'
     days = r.get(key_days) if r.exists(key_days) else 'X' * number_of_days
     days = f'{days[:now.day - 1]}O{days[now.day:]}'
     message = f"{days.count('O')}회 달성!"
