@@ -78,7 +78,7 @@ def draw(display_name, message, days, weekday, holiday):
         else:
             color = '#ff0000' if len(cells) % 7 == 0 or i + 1 in holiday else None
             cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=str(i + 1)))
-    for i in range((7 - len(cells) % 7) % 7):
+    for i in range(-len(cells) % 7):
         cells.append(FillerComponent())
 
     contents = [TextComponent(text=message, weight='bold'), TextComponent(text=display_name, size='sm')]
