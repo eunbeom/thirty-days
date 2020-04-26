@@ -5,9 +5,10 @@ from datetime import datetime
 
 import redis as redis
 import requests
-from flask import Flask, request, json, render_template
+from flask import Flask, request, json
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage, FlexSendMessage
+from linebot.models import MessageEvent, TextMessage, FlexSendMessage, \
+    BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent
 
 app = Flask(__name__)
 
@@ -50,30 +51,58 @@ def handle_text_message(event):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
-    key = f'{group_id}:{event.source.user_id}:{now.year}-{now.month}'
-    days = r.get(key) if r.exists(key) else 'X' * number_of_days
+    key_name = f'{group_id}:{event.source.user_id}:{profile.display_name}'
+    key_days = f'{group_id}:{event.source.user_id}:{now.year}-{now.month}'
+    days = r.get(key_days) if r.exists(key_days) else 'X' * number_of_days
     days = f'{days[:now.day - 1]}O{days[now.day:]}'
-    count = days.count('O')
+    message = f"{days.count('O')}회 달성!"
 
-    r.set(key, days)
+    r.mset({key_name: profile.display_name, key_days: days})
 
-    contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, days=days))
-    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f"{count}회 달성!", contents=contents))
+    line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=message, contents=draw(
+        display_name=profile.display_name, message=message, days=days,
+        weekday=weekday, holiday=get_holiday(now.year, now.month)
+    )))
+
+
+def draw(display_name, message, days, weekday, holiday):
+    cells = []
+    for i in range((weekday + 1) % 7):
+        cells.append(FillerComponent())
+    for i in range(days):
+        if days[i] == 'O':
+            cells.append(
+                ImageComponent(url='https://raw.githubusercontent.com/eunbeom/thirty-days/master/static/check.png'))
+        else:
+            day = str(i + 1)
+            color = '#ff0000' if len(cells) % 7 == 0 or day in holiday else None
+            cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=day))
+    for i in range((7 - len(cells) % 7) % 7):
+        cells.append(FillerComponent())
+
+    contents = [TextComponent(text=message, weight='bold'), TextComponent(text=display_name, size='sm')]
+    for start in range(0, len(cells), 7):
+        contents.append(BoxComponent(layout='horizontal', contents=cells[start:start + 7]))
+
+    return BubbleContainer(direction='ltr', size='micro', body=BoxComponent(layout='vertical', contents=contents))
 
 
 def get_holiday(year, month):
-    url = f'http://openapi.kasi.re.kr/openapi/service/SpcdeInfoService/getHoliDeInfo?&_type=json&solYear={year}&solMonth={month:02d}'
-    text = requests.get(url).text
-    items = json.loads(text)['response']['body']['items']
-    if items == '':
-        holiday = []
-    elif type(items['item']) == dict:
-        holiday = [items['item']['locdate'] % 100]
-    else:
-        holiday = list()
-        for item in items['item']:
-            holiday.append(item['locdate'] % 100)
-    return holiday
+    url = 'http://openapi.kasi.re.kr/openapi/service/SpcdeInfoService/getHoliDeInfo'
+    try:
+        text = requests.get(url, params={'_type': 'json', 'solYear': year, 'solMonth': f"{month:02d}"}).text
+        items = json.loads(text)['response']['body']['items']
+        if items == '':
+            return []
+        elif type(items['item']) == dict:
+            return [items['item']['locdate'] % 100]
+        else:
+            holiday = list()
+            for item in items['item']:
+                holiday.append(item['locdate'] % 100)
+            return holiday
+    except:
+        return []
 
 
 if __name__ == "__main__":
