@@ -69,7 +69,7 @@ def draw(display_name, message, days, weekday, holiday):
     cells = []
     for i in range((weekday + 1) % 7):
         cells.append(FillerComponent())
-    for i in range(days):
+    for i in range(len(days)):
         if days[i] == 'O':
             cells.append(
                 ImageComponent(url='https://raw.githubusercontent.com/eunbeom/thirty-days/master/static/check.png'))
