@@ -76,9 +76,8 @@ def draw(display_name, message, days, weekday, holiday):
             cells.append(
                 ImageComponent(url='https://raw.githubusercontent.com/eunbeom/thirty-days/master/static/check.png'))
         else:
-            day = str(i + 1)
-            color = '#ff0000' if len(cells) % 7 == 0 or day in holiday else None
-            cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=day))
+            color = '#ff0000' if len(cells) % 7 == 0 or i + 1 in holiday else None
+            cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=str(i + 1)))
     for i in range((7 - len(cells) % 7) % 7):
         cells.append(FillerComponent())
 
@@ -107,7 +106,6 @@ def get_holiday(year, month):
             for item in items['item']:
                 holiday.append(item['locdate'] % 100)
         saved_year, saved_month, saved_holiday = year, month, holiday
-        print(holiday)
         return holiday
     except:
         return []
