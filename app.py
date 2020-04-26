@@ -4,6 +4,7 @@ from calendar import monthrange
 from datetime import datetime
 
 import redis as redis
+import requests
 from flask import Flask, request, json, render_template
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage
@@ -58,6 +59,21 @@ def handle_text_message(event):
 
     contents = json.loads(render_template('flex.json', display_name=profile.display_name, count=count, days=days))
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=f"{count}회 달성!", contents=contents))
+
+
+def get_holiday(year, month):
+    url = f'http://openapi.kasi.re.kr/openapi/service/SpcdeInfoService/getHoliDeInfo?&_type=json&solYear={year}&solMonth={month:02d}'
+    text = requests.get(url).text
+    items = json.loads(text)['response']['body']['items']
+    if items == '':
+        holiday = []
+    elif type(items['item']) == dict:
+        holiday = [items['item']['locdate'] % 100]
+    else:
+        holiday = list()
+        for item in items['item']:
+            holiday.append(item['locdate'] % 100)
+    return holiday
 
 
 if __name__ == "__main__":
