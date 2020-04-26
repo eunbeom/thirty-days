@@ -17,6 +17,8 @@ handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 
 r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
 
+saved_year, saved_month, saved_holiday = 0, 0, []
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -88,19 +90,25 @@ def draw(display_name, message, days, weekday, holiday):
 
 
 def get_holiday(year, month):
+    global saved_year, saved_month, saved_holiday
+    if year == saved_year and month == saved_month:
+        return saved_holiday
+
     url = 'http://openapi.kasi.re.kr/openapi/service/SpcdeInfoService/getHoliDeInfo'
     try:
-        text = requests.get(url, params={'_type': 'json', 'solYear': year, 'solMonth': f"{month:02d}"}).text
-        items = json.loads(text)['response']['body']['items']
+        res = requests.get(url, params={'_type': 'json', 'solYear': year, 'solMonth': f"{month:02d}"})
+        items = json.loads(res.text)['response']['body']['items']
         if items == '':
-            return []
+            holiday = []
         elif type(items['item']) == dict:
-            return [items['item']['locdate'] % 100]
+            holiday = [items['item']['locdate'] % 100]
         else:
-            holiday = list()
+            holiday = []
             for item in items['item']:
                 holiday.append(item['locdate'] % 100)
-            return holiday
+        saved_year, saved_month, saved_holiday = year, month, holiday
+        print(holiday)
+        return holiday
     except:
         return []
 
