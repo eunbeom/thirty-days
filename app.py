@@ -21,7 +21,7 @@ saved_year, saved_month, saved_holiday = 0, 0, []
 
 
 @app.route("/", methods=['GET'])
-def callback():
+def index():
     if request.method == 'GET':
         gid = request.args.get('gid')
 
