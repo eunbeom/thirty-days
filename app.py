@@ -5,9 +5,9 @@ from datetime import datetime
 
 import redis as redis
 import requests
-from flask import Flask, request, json
+from flask import Flask, request, json, render_template
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage, FlexSendMessage, \
+from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
     BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent
 
 app = Flask(__name__)
@@ -18,6 +18,32 @@ handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
 r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_responses=True)
 
 saved_year, saved_month, saved_holiday = 0, 0, []
+
+
+@app.route("/", methods=['GET'])
+def callback():
+    if request.method == 'GET':
+        gid = request.args.get('gid')
+
+    keys = []
+    now = datetime.now()
+    month = f'{now.year}-{now.month:02d}'
+    for key in r.scan_iter(f'{gid}:*:{month}'):
+        uid = key.split(':')[1]
+        keys.append(f'display_name:{uid}')
+        keys.append(f'{gid}:{uid}:{month}')
+
+    if len(keys) == 0:
+        return 'data not found'
+
+    values = r.mget(keys)
+
+    table = [[''] + [str(i + 1) for i in range(len(values[1]))]]
+    for i in range(0, len(values), 2):
+        row = [values[i]] + [char if char == 'O' else '' for char in values[i + 1]]
+        table.append(row)
+
+    return render_template('index.html', table=table)
 
 
 @app.route("/callback", methods=['POST'])
@@ -48,6 +74,11 @@ def handle_text_message(event):
         group_id = event.source.user_id
         profile = line_bot_api.get_profile(event.source.user_id)
     else:
+        return
+
+    if '#인증내역' in event.message.text:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(
+            text=f'''https://{os.environ['HEROKU_APP_NAME']}.herokuapp.com?gid={group_id}'''))
         return
 
     now = datetime.now()
