@@ -78,7 +78,7 @@ def handle_text_message(event):
 
     if '#인증내역' in event.message.text:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text=f'''https://{os.environ['HEROKU_APP_NAME']}.herokuapp.com?gid={group_id}'''))
+            text=f'{request.host_url}?gid={group_id}'))
         return
 
     now = datetime.now()
