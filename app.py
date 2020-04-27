@@ -77,8 +77,9 @@ def handle_text_message(event):
         return
 
     if '#인증내역' in event.message.text:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text=f'{request.host_url}?gid={group_id}'))
+        url = f'{request.host_url}?gid={group_id}'
+        res = requests.get(f'http://tinyurl.com/api-create.php?url={url}')
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=res.text))
         return
 
     now = datetime.now()
