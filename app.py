@@ -45,7 +45,7 @@ def index():
         row = [values[i]] + [char if char == 'O' else '' for char in values[i + 1]]
         table.append(row)
 
-        for j in range(len(length)):
+        for j in range(length):
             count[j] += 1 if values[i + 1][j] == 'O' else 0
 
     return render_template('index.html', table=table, chart=count, label=list(range(1, length + 1)))
