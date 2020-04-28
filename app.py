@@ -38,12 +38,17 @@ def index():
 
     values = r.mget(keys)
 
-    table = [[''] + [str(i + 1) for i in range(len(values[1]))]]
+    length = len(values[1])
+    table = [[''] + [str(i + 1) for i in range(length)]]
+    count = [0 for _ in range(length)]
     for i in range(0, len(values), 2):
         row = [values[i]] + [char if char == 'O' else '' for char in values[i + 1]]
         table.append(row)
 
-    return render_template('index.html', table=table)
+        for j in range(len(length)):
+            count[j] += 1 if values[i + 1][j] == 'O' else 0
+
+    return render_template('index.html', table=table, chart=count, label=list(range(1, length + 1)))
 
 
 @app.route("/callback", methods=['POST'])
