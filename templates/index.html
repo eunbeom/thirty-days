@@ -3,6 +3,7 @@
 <head>
     <title>Thirty Days</title>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         table {
             text-align: center;
@@ -24,6 +25,7 @@
 </head>
 <body>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 <script>
     function doit(type, fn) {
@@ -31,6 +33,29 @@
         const wb = XLSX.utils.table_to_book(elt, {sheet: "Sheet JS"});
         return XLSX.writeFile(wb, fn || ('thirty-days.xlsx'));
     }
+</script>
+
+<canvas id="myChart"></canvas>
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',
+
+    data: {
+        labels: {{ label }},
+        datasets: [{
+            backgroundColor: 'rgba(0, 185, 0, 0.3)',
+            borderColor: 'rgb(0, 185, 0)',
+            data: {{ chart }}
+        }]
+    },
+
+    options: {
+        legend: {
+            display: false,
+        }
+    }
+});
 </script>
 
 <div id="container"></div>
