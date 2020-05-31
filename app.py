@@ -66,7 +66,7 @@ def handle_text_message(event):
             line_bot_api.leave_room(room_id=event.source.room_id)
         return
 
-    if '#인증' not in event.message.text:
+    if all(tag not in event.message.text for tag in ['#인증', '#ㅇㅈ']):
         return
 
     if event.source.type == 'group':
