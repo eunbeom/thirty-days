@@ -6,11 +6,13 @@ from datetime import datetime
 import redis as redis
 import requests
 from flask import Flask, request, json, render_template
+from flask_sslify import SSLify
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
     BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent
 
 app = Flask(__name__)
+sslify = SSLify(app)
 
 line_bot_api = LineBotApi(os.environ['LINE_CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(os.environ['LINE_CHANNEL_SECRET'])
