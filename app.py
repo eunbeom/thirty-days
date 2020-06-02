@@ -41,7 +41,7 @@ def index(gid):
         row = [values[i]] + [char if char == 'O' else '' for char in values[i + 1]]
         table.append(row)
 
-    return render_template('index.html', table=table, label=list(range(1, length + 1)))
+    return render_template('index.html', table=table, label=list(range(1, length + 1)), month=month)
 
 
 @app.route("/callback", methods=['POST'])
