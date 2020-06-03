@@ -20,11 +20,16 @@ r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_response
 saved_year, saved_month, saved_holiday = 0, 0, []
 
 
-@app.route("/<gid>", methods=['GET'])
+@app.route("/<gid>", methods=['GET', 'POST'])
 def index(gid):
     keys = []
     now = datetime.now()
-    month = f'{now.year}-{now.month:02d}'
+
+    if request.method == 'GET':
+        month = f'{now.year}-{now.month:02d}'
+    else:
+        month = request.form['month']
+
     for key in r.scan_iter(f'{gid}:*:{month}'):
         uid = key.split(':')[1]
         keys.append(f'display_name:{uid}')
