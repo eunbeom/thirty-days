@@ -90,7 +90,8 @@ def handle_text_message(event):
     key_name = f'display_name:{event.source.user_id}'
     key_days = f'{group_id}:{event.source.user_id}:{now.year}-{now.month:02d}'
     days = r.get(key_days) if r.exists(key_days) else 'X' * number_of_days
-    days = f'{days[:now.day - 1]}O{days[now.day:]}'
+    mark = "X" if '#인증취소' in event.message.text else "O"
+    days = f'{days[:now.day - 1]}{mark}{days[now.day:]}'
     message = f"{days.count('O')}회 달성!"
 
     r.mset({key_name: profile.display_name, key_days: days})
