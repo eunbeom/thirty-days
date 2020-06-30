@@ -128,7 +128,7 @@ def get_holiday(year, month):
     if year == saved_year and month == saved_month:
         return saved_holiday
 
-    url = 'http://openapi.kasi.re.kr/openapi/service/SpcdeInfoService/getHoliDeInfo'
+    url = 'http://openapi.kasi.re.kr/openapi/service/SpcdeInfoService/getRestDeInfo'
     try:
         res = requests.get(url, params={'_type': 'json', 'solYear': year, 'solMonth': f"{month:02d}"})
         items = json.loads(res.text)['response']['body']['items']
