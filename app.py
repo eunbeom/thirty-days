@@ -35,9 +35,6 @@ def index(gid):
         keys.append(f'display_name:{uid}')
         keys.append(f'{gid}:{uid}:{month}')
 
-    if len(keys) == 0:
-        return 'data not found'
-
     values = r.mget(keys)
 
     length = len(values[1])
