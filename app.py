@@ -35,6 +35,9 @@ def index(gid):
         keys.append(f'display_name:{uid}')
         keys.append(f'{gid}:{uid}:{month}')
 
+    if len(keys) == 0:
+        return render_template('empty.html', month=month)
+
     values = r.mget(keys)
 
     length = len(values[1])
