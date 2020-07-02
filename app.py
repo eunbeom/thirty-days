@@ -57,9 +57,9 @@ def callback():
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
-    print(f'packageId : {event.message.package_id}, stickerId : {event.message.sticker_id}')
-    group_id, profile = get_profile(event)
-    check(event, group_id, profile)
+    if event.message.package_id == 1813268 and event.message.sticker_id == 25483443:
+        group_id, profile = get_profile(event)
+        check(event, group_id, profile, '#ffff00')
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -100,7 +100,7 @@ def get_profile(event):
     return group_id, profile
 
 
-def check(event, group_id, profile, attend=True):
+def check(event, group_id, profile, attend, color=None):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
@@ -115,11 +115,11 @@ def check(event, group_id, profile, attend=True):
 
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=message, contents=draw(
         display_name=profile.display_name, message=message, days=days,
-        weekday=weekday, holiday=get_holiday(now.year, now.month)
+        weekday=weekday, holiday=get_holiday(now.year, now.month), color=color
     )))
 
 
-def draw(display_name, message, days, weekday, holiday):
+def draw(display_name, message, days, weekday, holiday, color):
     cells = []
     for i in range((weekday + 1) % 7):
         cells.append(FillerComponent())
@@ -137,7 +137,8 @@ def draw(display_name, message, days, weekday, holiday):
     for start in range(0, len(cells), 7):
         contents.append(BoxComponent(layout='horizontal', contents=cells[start:start + 7]))
 
-    return BubbleContainer(direction='ltr', size='micro', body=BoxComponent(layout='vertical', contents=contents))
+    return BubbleContainer(direction='ltr', size='micro',
+                           body=BoxComponent(layout='vertical', contents=contents, background_color=color))
 
 
 def get_holiday(year, month):
