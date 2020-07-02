@@ -60,7 +60,7 @@ def handle_sticker_message(event):
     print(f'package_id : {event.message.package_id}, sticker_id : {event.message.sticker_id}')
     if event.message.package_id == '1813268' and event.message.sticker_id == '25483443':
         group_id, profile = get_profile(event)
-        check(event, group_id, profile, '#ffff00')
+        check(event, group_id, profile, True, '#fbccd1')
 
 
 @handler.add(MessageEvent, message=TextMessage)
