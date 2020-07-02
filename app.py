@@ -84,7 +84,8 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
         return
 
-    print(event.message)
+    if event.message.type == 'sticker':
+        print(f'packageId : {event.message.package_id}, stickerId : {event.message.sticker_id}')
 
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
