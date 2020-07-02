@@ -8,7 +8,7 @@ import requests
 from flask import Flask, request, json, render_template
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
-    BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent
+    BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent, StickerMessage
 
 app = Flask(__name__)
 
@@ -55,6 +55,13 @@ def callback():
     return 'OK'
 
 
+@handler.add(MessageEvent, message=StickerMessage)
+def handle_sticker_message(event):
+    print(f'packageId : {event.message.package_id}, stickerId : {event.message.sticker_id}')
+    group_id, profile = get_profile(event)
+    check(event, group_id, profile)
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     if event.message.text == '@bye':
@@ -64,12 +71,20 @@ def handle_text_message(event):
             line_bot_api.leave_room(room_id=event.source.room_id)
         return
 
-    if event.message.type == 'sticker':
-        print(f'packageId : {event.message.package_id}, stickerId : {event.message.sticker_id}')
-
     if not any(tag in event.message.text for tag in ['#인증', '#ㅇㅈ']):
         return
 
+    group_id, profile = get_profile(event)
+
+    if any(tag in event.message.text for tag in ['#인증내역', '#인증현황']):
+        url = f'https://{request.host}/{group_id}'
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
+        return
+
+    check(event, group_id, profile)
+
+
+def get_profile(event):
     if event.source.type == 'group':
         group_id = event.source.group_id
         profile = line_bot_api.get_group_member_profile(event.source.group_id, event.source.user_id)
@@ -81,12 +96,10 @@ def handle_text_message(event):
         profile = line_bot_api.get_profile(event.source.user_id)
     else:
         return
+    return group_id, profile
 
-    if any(tag in event.message.text for tag in ['#인증내역', '#인증현황']):
-        url = f'https://{request.host}/{group_id}'
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
-        return
 
+def check(event, group_id, profile):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
