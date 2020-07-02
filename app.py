@@ -101,7 +101,7 @@ def get_profile(event):
     return group_id, profile
 
 
-def check(event, group_id, profile, attend, color=None):
+def check(event, group_id, profile, attend, bg_color=None):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
@@ -116,11 +116,11 @@ def check(event, group_id, profile, attend, color=None):
 
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=message, contents=draw(
         display_name=profile.display_name, message=message, days=days,
-        weekday=weekday, holiday=get_holiday(now.year, now.month), color=color
+        weekday=weekday, holiday=get_holiday(now.year, now.month), bg_color=bg_color
     )))
 
 
-def draw(display_name, message, days, weekday, holiday, color):
+def draw(display_name, message, days, weekday, holiday, bg_color):
     cells = []
     for i in range((weekday + 1) % 7):
         cells.append(FillerComponent())
@@ -139,7 +139,7 @@ def draw(display_name, message, days, weekday, holiday, color):
         contents.append(BoxComponent(layout='horizontal', contents=cells[start:start + 7]))
 
     return BubbleContainer(direction='ltr', size='micro',
-                           body=BoxComponent(layout='vertical', contents=contents, background_color=color))
+                           body=BoxComponent(layout='vertical', contents=contents, background_color=bg_color))
 
 
 def get_holiday(year, month):
