@@ -59,8 +59,14 @@ def callback():
 def handle_sticker_message(event):
     print(f'package_id : {event.message.package_id}, sticker_id : {event.message.sticker_id}')
     if event.message.package_id == '1813268' and event.message.sticker_id == '25483443':
-        group_id, profile = get_profile(event)
-        check(event, group_id, profile, True, '#fbccd1')
+        bg_color = '#fbccd1'
+    elif event.message.package_id == '1813268' and event.message.sticker_id == '25483445':
+        bg_color = '#87ceeb'
+    else:
+        return
+
+    group_id, profile = get_profile(event)
+    check(event, group_id, profile, True, bg_color)
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -83,7 +89,7 @@ def handle_text_message(event):
         return
 
     attend = False if '#인증취소' in event.message.text else True
-    check(event, group_id, profile, attend)
+    check(event, group_id, profile, attend, None)
 
 
 def get_profile(event):
@@ -101,7 +107,7 @@ def get_profile(event):
     return group_id, profile
 
 
-def check(event, group_id, profile, attend, bg_color=None):
+def check(event, group_id, profile, attend, bg_color):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
