@@ -64,6 +64,9 @@ def handle_text_message(event):
             line_bot_api.leave_room(room_id=event.source.room_id)
         return
 
+    if event.message.type == 'sticker':
+        print(f'packageId : {event.message.package_id}, stickerId : {event.message.sticker_id}')
+
     if not any(tag in event.message.text for tag in ['#인증', '#ㅇㅈ']):
         return
 
@@ -83,9 +86,6 @@ def handle_text_message(event):
         url = f'https://{request.host}/{group_id}'
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
         return
-
-    if event.message.type == 'sticker':
-        print(f'packageId : {event.message.package_id}, stickerId : {event.message.sticker_id}')
 
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
