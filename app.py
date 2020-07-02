@@ -81,7 +81,8 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
         return
 
-    check(event, group_id, profile)
+    attend = False if '#인증취소' in event.message.text else True
+    check(event, group_id, profile, attend)
 
 
 def get_profile(event):
@@ -99,14 +100,14 @@ def get_profile(event):
     return group_id, profile
 
 
-def check(event, group_id, profile):
+def check(event, group_id, profile, attend=True):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
     key_name = f'display_name:{event.source.user_id}'
     key_days = f'{group_id}:{event.source.user_id}:{now.year}-{now.month:02d}'
     days = r.get(key_days) if r.exists(key_days) else 'X' * number_of_days
-    mark = "X" if '#인증취소' in event.message.text else "O"
+    mark = 'O' if attend else "X"
     days = f'{days[:now.day - 1]}{mark}{days[now.day:]}'
     message = f"{days.count('O')}회 달성!"
 
