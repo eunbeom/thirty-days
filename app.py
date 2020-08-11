@@ -127,7 +127,8 @@ def check(event, group_id, attend, bg_color):
     message = f"{days.count('O')}회 달성!"
 
     if r.exists(key_name):
-        display_name = r.get(key_name)
+        # display_name = r.get(key_name)
+        display_name = get_display_name(event)
         r.set(key_days, days)
     else:
         display_name = get_display_name(event)
