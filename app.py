@@ -65,8 +65,8 @@ def handle_sticker_message(event):
     else:
         return
 
-    group_id = get_group_id(event)
-    check(event, group_id, True, bg_color)
+    group_id, profile = get_profile(event)
+    check(event, group_id, profile, True, bg_color)
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -81,7 +81,7 @@ def handle_text_message(event):
     if not any(tag in event.message.text for tag in ['#인증', '#ㅇㅈ']):
         return
 
-    group_id = get_group_id(event)
+    group_id, profile = get_profile(event)
 
     if any(tag in event.message.text for tag in ['#인증내역', '#인증현황']):
         url = f'https://{request.host}/{group_id}'
@@ -89,33 +89,25 @@ def handle_text_message(event):
         return
 
     attend = False if '#인증취소' in event.message.text else True
-    check(event, group_id, attend, None)
+    check(event, group_id, profile, attend, None)
 
 
-def get_group_id(event):
+def get_profile(event):
     if event.source.type == 'group':
-        return event.source.group_id
-    elif event.source.type == 'room':
-        return event.source.room_id
-    elif event.source.type == 'user':
-        return event.source.user_id
-    else:
-        return
-
-
-def get_display_name(event):
-    if event.source.type == 'group':
+        group_id = event.source.group_id
         profile = line_bot_api.get_group_member_profile(event.source.group_id, event.source.user_id)
     elif event.source.type == 'room':
+        group_id = event.source.room_id
         profile = line_bot_api.get_room_member_profile(event.source.room_id, event.source.user_id)
     elif event.source.type == 'user':
+        group_id = event.source.user_id
         profile = line_bot_api.get_profile(event.source.user_id)
     else:
         return
-    return profile.display_name
+    return group_id, profile
 
 
-def check(event, group_id, attend, bg_color):
+def check(event, group_id, profile, attend, bg_color):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
@@ -126,15 +118,10 @@ def check(event, group_id, attend, bg_color):
     days = f'{days[:now.day - 1]}{mark}{days[now.day:]}'
     message = f"{days.count('O')}회 달성!"
 
-    if r.exists(key_name):
-        display_name = r.get(key_days)
-        r.set(key_days, days)
-    else:
-        display_name = get_display_name(event)
-        r.mset({key_name: display_name, key_days: days})
+    r.mset({key_name: profile.display_name, key_days: days})
 
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=message, contents=draw(
-        display_name=display_name, message=message, days=days,
+        display_name=profile.display_name, message=message, days=days,
         weekday=weekday, holiday=get_holiday(now.year, now.month), bg_color=bg_color
     )))
 
