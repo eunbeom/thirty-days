@@ -58,10 +58,20 @@ def callback():
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
     print(f'package_id : {event.message.package_id}, sticker_id : {event.message.sticker_id}')
-    if event.message.package_id == '1813268' and event.message.sticker_id == '25483443':
-        bg_color = '#fbccd1'
-    elif event.message.package_id == '1813268' and event.message.sticker_id == '25483445':
-        bg_color = '#87ceeb'
+
+    if event.message.package_id == '13503068':
+        if event.message.sticker_id == '356169382' or event.message.sticker_id == '356169383':
+            bg_color = None
+        elif event.message.sticker_id == '356169386':
+            bg_color = None
+        elif event.message.sticker_id == '356169387':
+            bg_color = None
+        elif event.message.sticker_id == '356169388':
+            bg_color = None
+        elif event.message.sticker_id == '356169389':
+            bg_color = None
+        else:
+            return
     else:
         return
 
