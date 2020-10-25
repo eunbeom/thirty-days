@@ -71,9 +71,9 @@ def handle_sticker_message(event):
         elif event.message.sticker_id == '356169386':
             check(event, group_id, profile, True, '#000000', '#ffffff')
         elif event.message.sticker_id == '356169387':
-            check(event, group_id, profile, True, '#fbccd1', '#ffffff')
-        elif event.message.sticker_id == '356169388':
             check(event, group_id, profile, True, '#87ceeb', '#ffffff')
+        elif event.message.sticker_id == '356169388':
+            check(event, group_id, profile, True, '#fbccd1', '#ffffff')
         elif event.message.sticker_id == '356169389':
             check(event, group_id, profile, True, '#00C300', '#ffffff')
         else:
