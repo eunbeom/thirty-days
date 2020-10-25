@@ -60,23 +60,24 @@ def handle_sticker_message(event):
     print(f'package_id : {event.message.package_id}, sticker_id : {event.message.sticker_id}')
 
     if event.message.package_id == '13503068':
+        group_id, profile = get_profile(event)
         if event.message.sticker_id == '356169382' or event.message.sticker_id == '356169383':
-            bg_color = None
+            check(event, group_id, profile, True)
+        elif event.message.sticker_id == '356169384':
+            check(event, group_id, profile, False)
+        elif event.message.sticker_id == '356169385':
+            url = f'https://{request.host}/{group_id}'
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
         elif event.message.sticker_id == '356169386':
-            bg_color = None
+            check(event, group_id, profile, True, '#000000', '#ffffff')
         elif event.message.sticker_id == '356169387':
-            bg_color = None
+            check(event, group_id, profile, True, '#fbccd1', '#ffffff')
         elif event.message.sticker_id == '356169388':
-            bg_color = None
+            check(event, group_id, profile, True, '#87ceeb', '#ffffff')
         elif event.message.sticker_id == '356169389':
-            bg_color = None
+            check(event, group_id, profile, True, '#00C300', '#ffffff')
         else:
             return
-    else:
-        return
-
-    group_id, profile = get_profile(event)
-    check(event, group_id, profile, True, bg_color)
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -117,7 +118,7 @@ def get_profile(event):
     return group_id, profile
 
 
-def check(event, group_id, profile, attend, bg_color):
+def check(event, group_id, profile, attend, bg_color=None, font_color=None):
     now = datetime.now()
     weekday, number_of_days = monthrange(now.year, now.month)
 
@@ -132,11 +133,11 @@ def check(event, group_id, profile, attend, bg_color):
 
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text=message, contents=draw(
         display_name=profile.display_name, message=message, days=days,
-        weekday=weekday, holiday=get_holiday(now.year, now.month), bg_color=bg_color
+        weekday=weekday, holiday=get_holiday(now.year, now.month), bg_color=bg_color, font_color=font_color
     )))
 
 
-def draw(display_name, message, days, weekday, holiday, bg_color):
+def draw(display_name, message, days, weekday, holiday, bg_color, font_color):
     cells = []
     for i in range((weekday + 1) % 7):
         cells.append(FillerComponent())
@@ -145,12 +146,13 @@ def draw(display_name, message, days, weekday, holiday, bg_color):
             cells.append(
                 ImageComponent(url='https://raw.githubusercontent.com/eunbeom/thirty-days/master/static/check.png'))
         else:
-            color = '#ff0000' if len(cells) % 7 == 0 or i + 1 in holiday else None
+            color = '#ff0000' if len(cells) % 7 == 0 or i + 1 in holiday else font_color
             cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=str(i + 1)))
     for i in range(-len(cells) % 7):
         cells.append(FillerComponent())
 
-    contents = [TextComponent(text=message, weight='bold'), TextComponent(text=display_name, size='sm')]
+    contents = [TextComponent(text=message, weight='bold', color=font_color),
+                TextComponent(text=display_name, size='sm', color=font_color)]
     for start in range(0, len(cells), 7):
         contents.append(BoxComponent(layout='horizontal', contents=cells[start:start + 7]))
 
