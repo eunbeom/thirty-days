@@ -82,8 +82,8 @@ def handle_sticker_message(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    print(str(event))
-    print(str(event, 'utf-8'))
+    print(type(event))
+    print(str(event).encode('utf-8'))
 
     if event.message.text == '@bye':
         if event.source.type == 'group':
