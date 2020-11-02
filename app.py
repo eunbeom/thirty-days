@@ -183,7 +183,3 @@ def get_holiday(year, month):
         return holiday
     except:
         return []
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ['PORT'])
