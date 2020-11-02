@@ -120,12 +120,12 @@ def log(event):
 
     if isinstance(event.message, TextMessage):
         print(f'message.text : {event.message.text}, '
-              f'group_id : {event.source.group_id}, '
+              f'group_id : {group_id}, '
               f'user_id :  {event.source.user_id}')
     elif isinstance(event.message, StickerMessage):
         print(f'package_id : {event.message.package_id}, '
               f'sticker_id : {event.message.sticker_id}, '
-              f'group_id : {event.source.group_id}, '
+              f'group_id : {group_id}, '
               f'user_id :  {event.source.user_id}')
     else:
         print(f'unknown message type : {type(event.message)}')
