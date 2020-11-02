@@ -57,7 +57,7 @@ def callback():
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
-    log(event)
+    print(event)
 
     if event.message.package_id == '13503068':
         group_id, profile = get_profile(event)
@@ -82,7 +82,7 @@ def handle_sticker_message(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    log(event)
+    print(event)
 
     if event.message.text == '@bye':
         if event.source.type == 'group':
@@ -103,32 +103,6 @@ def handle_text_message(event):
 
     attend = False if '#인증취소' in event.message.text else True
     check(event, group_id, profile, attend, None)
-
-
-def log(event):
-    print(event)
-
-    if event.source.type == 'group':
-        group_id = event.source.group_id
-    elif event.source.type == 'room':
-        group_id = event.source.room_id
-    elif event.source.type == 'user':
-        group_id = event.source.user_id
-    else:
-        print(f'unknown source type : {event.source.type}')
-        return
-
-    if isinstance(event.message, TextMessage):
-        print(f'message.text : {event.message.text}, '
-              f'group_id : {group_id}, '
-              f'user_id :  {event.source.user_id}')
-    elif isinstance(event.message, StickerMessage):
-        print(f'package_id : {event.message.package_id}, '
-              f'sticker_id : {event.message.sticker_id}, '
-              f'group_id : {group_id}, '
-              f'user_id :  {event.source.user_id}')
-    else:
-        print(f'unknown message type : {type(event.message)}')
 
 
 def get_profile(event):
