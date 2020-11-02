@@ -57,7 +57,12 @@ def callback():
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
-    print(f'package_id : {event.message.package_id}, sticker_id : {event.message.sticker_id}')
+    print(f'package_id : {event.message.package_id}, '
+          f'sticker_id : {event.message.sticker_id}, '
+          f'event.source.type : {event.source.type}, '
+          f'event.source.user_id : {event.source.user_id}, '
+          f'event.source.room_id : {event.source.room_id}, '
+          f'event.source.group_id : {event.source.group_id}, ')
 
     if event.message.package_id == '13503068':
         group_id, profile = get_profile(event)
@@ -82,6 +87,12 @@ def handle_sticker_message(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    print(f'event.message.text : {event.message.text}, '
+          f'event.source.type : {event.source.type}, '
+          f'event.source.user_id : {event.source.user_id}, '
+          f'event.source.room_id : {event.source.room_id}, '
+          f'event.source.group_id : {event.source.group_id}, ')
+
     if event.message.text == '@bye':
         if event.source.type == 'group':
             line_bot_api.leave_group(group_id=event.source.group_id)
