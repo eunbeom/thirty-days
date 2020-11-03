@@ -150,7 +150,7 @@ def draw(display_name, message, days, weekday, holiday, bg_color, font_color):
         cells.append(FillerComponent())
     for i in range(len(days)):
         if days[i] == 'O':
-            cells.append(ImageComponent(url=url_for('static', filename='check.png')))
+            cells.append(ImageComponent(url=f'https://{request.host}/static/check.png'))
         else:
             color = '#ff0000' if len(cells) % 7 == 0 or i + 1 in holiday else font_color
             cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=str(i + 1)))
