@@ -5,7 +5,7 @@ from datetime import datetime
 
 import redis as redis
 import requests
-from flask import Flask, request, json, render_template
+from flask import Flask, request, json, render_template, url_for
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
     BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent, StickerMessage
@@ -150,7 +150,7 @@ def draw(display_name, message, days, weekday, holiday, bg_color, font_color):
         cells.append(FillerComponent())
     for i in range(len(days)):
         if days[i] == 'O':
-            cells.append(ImageComponent(url='https://i.ibb.co/Xbk7PfN/check.png'))
+            cells.append(ImageComponent(url=url_for('static', filename='check.png')))
         else:
             color = '#ff0000' if len(cells) % 7 == 0 or i + 1 in holiday else font_color
             cells.append(TextComponent(align='center', gravity='center', size='sm', color=color, text=str(i + 1)))
