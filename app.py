@@ -20,8 +20,13 @@ r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_response
 saved_year, saved_month, saved_holiday = 0, 0, []
 
 
+@app.route('/')
+def index():
+    return 'Hello World'
+
+
 @app.route("/<gid>", methods=['GET', 'POST'])
-def index(gid):
+def attendance(gid):
     keys = []
     now = datetime.now()
 
