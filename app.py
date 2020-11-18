@@ -5,7 +5,7 @@ from datetime import datetime
 
 import redis as redis
 import requests
-from flask import Flask, request, json, render_template, url_for
+from flask import Flask, request, json, render_template
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
     BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent, StickerMessage
@@ -22,7 +22,25 @@ saved_year, saved_month, saved_holiday = 0, 0, []
 
 @app.route('/')
 def index():
-    return 'Hello World'
+    now = datetime.now()
+    month = f'{now.year}-{now.month:02d}'
+
+    groups = set()
+    keys = list()
+    for key in r.scan_iter(match=f'*:{month}', count=100):
+        groups.add(key.split(':', 1)[0])
+        keys.append(key)
+
+    values = r.mget(keys)
+
+    res = ''
+    for group in groups:
+        res += f'\n{group}\n'
+        for i in range(len(keys)):
+            if group in keys[i]:
+                res += f'{values[i]}\n'
+
+    return res
 
 
 @app.route("/<gid>", methods=['GET', 'POST'])
@@ -35,7 +53,7 @@ def attendance(gid):
     else:
         month = request.form['month']
 
-    for key in r.scan_iter(f'{gid}:*:{month}'):
+    for key in r.scan_iter(match=f'{gid}:*:{month}', count=100):
         uid = key.split(':')[1]
         keys.append(f'display_name:{uid}')
         keys.append(f'{gid}:{uid}:{month}')
