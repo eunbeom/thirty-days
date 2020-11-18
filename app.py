@@ -25,20 +25,30 @@ def index():
     now = datetime.now()
     month = f'{now.year}-{now.month:02d}'
 
-    groups = set()
     keys = list()
     for key in r.scan_iter(match=f'*:{month}', count=100):
-        groups.add(key.split(':', 1)[0])
         keys.append(key)
 
     values = r.mget(keys)
 
+    count = dict()
+    for i in range(len(keys)):
+        key = keys[i]
+        group_id = key.split(':', 1)[0]
+
+        attend = 1 if values[i][now.day - 1] == 'O' else 0
+
+        if group_id in count:
+            count[group_id][0] += attend
+            count[group_id][1] += 1
+        else:
+            count[group_id] = [attend, 1]
+
     res = ''
-    for group in groups:
-        res += f'\n{group}\n'
-        for i in range(len(keys)):
-            if group in keys[i]:
-                res += f'{values[i]}\n'
+    for group_id in count:
+        if count[group_id][0] == 0:
+            continue
+        res += f'{group_id} : {count[group_id][0] / count[group_id][1] * 100:.1f}%<br>'
 
     return res
 
@@ -69,7 +79,7 @@ def attendance(gid):
         row = [values[i]] + [char if char == 'O' else '' for char in values[i + 1]]
         table.append(row)
 
-    return render_template('index.html', table=table, label=list(range(1, length + 1)), month=month)
+    return render_template('table.html', table=table, label=list(range(1, length + 1)), month=month)
 
 
 @app.route("/callback", methods=['POST'])
