@@ -47,7 +47,7 @@ def index():
     res = ''
     for group_id in count:
         if group_id[0] != 'C':
-            group_name = group_id
+            continue
         else:
             group_name = r.get(f'group_name:{group_id}')
             if group_name is None:
