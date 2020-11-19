@@ -48,7 +48,19 @@ def index():
     for group_id in count:
         if count[group_id][0] == 0:
             continue
-        res += f'{group_id} : {count[group_id][0] / count[group_id][1]:.0%}%<br>'
+
+        summary = r.mget(f'group_name:{group_id}', f'picture_url:{group_id}')
+        group_name, picture_url = summary[0], summary[1]
+
+        if group_name is None:
+            if group_id[0] == 'C':
+                summary = line_bot_api.get_group_summary(group_id)
+                group_name, picture_url = summary.group_name, summary.picture_url
+                r.mset({f'group_name:{group_id}': group_name, f'picture_url:{group_id}': picture_url})
+            else:
+                group_name = group_id
+
+        res += f'{group_name} : {count[group_id][0] / count[group_id][1]:.0%}<br>'
     return res
 
 
