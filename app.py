@@ -48,8 +48,7 @@ def index():
     for group_id in count:
         if count[group_id][0] == 0:
             continue
-        res += f'{group_id} : {count[group_id][0] / count[group_id][1] * 100:.1f}%<br>'
-
+        res += f'{group_id} : {count[group_id][0] / count[group_id][1]:.0%}%<br>'
     return res
 
 
@@ -135,7 +134,7 @@ def handle_text_message(event):
         return
 
     attend = False if '#인증취소' in event.message.text else True
-    check(event, group_id, profile, attend, None)
+    check(event, group_id, profile, attend)
 
 
 def get_profile(event):

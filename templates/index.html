@@ -4,50 +4,10 @@
     <title>Thirty Days</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        table {
-            text-align: center;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            min-width: 20px;
-            border: 1px solid black;
-        }
-
-        td:first-child {
-            text-align: right;
-            white-space: nowrap;
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-    </style>
 </head>
 <body>
 
-<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-<script>
-    function doit(type, fn) {
-        const elt = document.getElementById('data-table');
-        const wb = XLSX.utils.table_to_book(elt, {sheet: "Sheet JS"});
-        return XLSX.writeFile(wb, fn || ('thirty-days.xlsx'));
-    }
-</script>
 
-<form method="post">
-    <input name="month" type="text" value="{{ month }}">
-    <input type="submit" value="확인">
-</form>
 
-<br>
-
-<div id="container"></div>
-<script type="text/javascript">
-    const ws = XLSX.utils.aoa_to_sheet({{ table | safe }});
-    const html_string = XLSX.utils.sheet_to_html(ws, {id: "data-table"});
-    document.getElementById("container").innerHTML = html_string;
-</script>
-<br>
-<input type="submit" value="Export to XLSX!" onclick="doit('xlsx');">
 </body>
 </html>
