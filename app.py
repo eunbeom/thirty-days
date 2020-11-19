@@ -60,7 +60,7 @@ def index():
             else:
                 group_name = group_id
 
-        res += f'{group_name} : {count[group_id][0] / count[group_id][1]:.0%}<br>'
+        res += f'<a href="{group_id}">{group_name}</a> : {count[group_id][0] / count[group_id][1]:.0%}<br>'
     return res
 
 
