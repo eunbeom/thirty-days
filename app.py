@@ -46,9 +46,6 @@ def index():
 
     res = ''
     for group_id in count:
-        if count[group_id][0] == 0:
-            continue
-
         summary = r.mget(f'group_name:{group_id}', f'picture_url:{group_id}')
         group_name, picture_url = summary[0], summary[1]
 
