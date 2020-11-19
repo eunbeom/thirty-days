@@ -36,13 +36,13 @@ def index():
         key = keys[i]
         group_id = key.split(':', 1)[0]
 
-        attend = 1 if values[i][now.day - 1] == 'O' else 0
+        attend = values[i].count('O')
 
         if group_id in count:
             count[group_id][0] += attend
-            count[group_id][1] += 1
+            count[group_id][1] += len(values[i])
         else:
-            count[group_id] = [attend, 1]
+            count[group_id] = [attend, len(values[i])]
 
     res = ''
     for group_id in count:
