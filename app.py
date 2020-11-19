@@ -26,7 +26,7 @@ def index():
     month = f'{now.year}-{now.month:02d}'
 
     keys = list()
-    for key in r.scan_iter(match=f'*:{month}', count=100):
+    for key in r.scan_iter(match=f'C*:{month}', count=100):
         keys.append(key)
 
     values = r.mget(keys)
@@ -46,9 +46,6 @@ def index():
 
     res = ''
     for group_id in count:
-        if group_id[0] != 'C':
-            continue
-
         group_name = r.get(f'group_name:{group_id}')
         if group_name is None:
             summary = line_bot_api.get_group_summary(group_id)
