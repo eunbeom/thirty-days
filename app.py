@@ -46,14 +46,12 @@ def index():
 
     res = ''
     for group_id in count:
-        summary = r.mget(f'group_name:{group_id}', f'picture_url:{group_id}')
-        group_name, picture_url = summary[0], summary[1]
-
+        group_name = r.get(f'group_name:{group_id}')
         if group_name is None:
             if group_id[0] == 'C':
                 summary = line_bot_api.get_group_summary(group_id)
-                group_name, picture_url = summary.group_name, summary.picture_url
-                r.mset({f'group_name:{group_id}': group_name, f'picture_url:{group_id}': picture_url})
+                group_name = summary.group_name
+                r.set(f'group_name:{group_id}', group_name)
             else:
                 group_name = group_id
 
