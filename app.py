@@ -48,12 +48,12 @@ def index():
     for group_id in count:
         if group_id[0] != 'C':
             continue
-        else:
-            group_name = r.get(f'group_name:{group_id}')
-            if group_name is None:
-                summary = line_bot_api.get_group_summary(group_id)
-                group_name = summary.group_name
-                r.set(f'group_name:{group_id}', group_name)
+
+        group_name = r.get(f'group_name:{group_id}')
+        if group_name is None:
+            summary = line_bot_api.get_group_summary(group_id)
+            group_name = summary.group_name
+            r.set(f'group_name:{group_id}', group_name)
 
         res += f'<a href="{group_id}">{group_name}</a> : {count[group_id][0] / count[group_id][1]:.0%}<br>'
     return res
