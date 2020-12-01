@@ -95,8 +95,6 @@ def callback():
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
-    print(event)
-
     if event.message.package_id == '13503068':
         group_id, profile = get_profile(event)
         if event.message.sticker_id == '356169382' or event.message.sticker_id == '356169383':
@@ -120,7 +118,7 @@ def handle_sticker_message(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    print(f'{event.message.text} {event}')
+    print(event.message.text)
 
     if event.message.text == '@bye':
         if event.source.type == 'group':
