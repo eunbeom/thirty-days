@@ -87,8 +87,9 @@ def attendance(gid):
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    print(request)
-    handler.handle(request.get_data(as_text=True), request.headers['X-Line-Signature'])
+    data = request.get_data(as_text=True)
+    print(data)
+    handler.handle(data, request.headers['X-Line-Signature'])
     return 'OK'
 
 
