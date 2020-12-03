@@ -23,7 +23,11 @@ saved_year, saved_month, saved_holiday = 0, 0, []
 @app.route('/')
 def index():
     now = datetime.now()
-    month = f'{now.year}-{now.month:02d}'
+
+    if request.method == 'GET':
+        month = f'{now.year}-{now.month:02d}'
+    else:
+        month = request.form['m']
 
     keys = list()
     for key in r.scan_iter(match=f'C*:{month}', count=100):
@@ -40,11 +44,11 @@ def index():
 
         if group_id in count:
             count[group_id][0] += attend
-            count[group_id][1] += len(values[i])
+            count[group_id][1] += 1
         else:
-            count[group_id] = [attend, len(values[i])]
+            count[group_id] = [attend, 1]
 
-    res = ''
+    content = ''
     for group_id in count:
         group_name = r.get(f'group_name:{group_id}')
         if group_name is None:
@@ -52,8 +56,8 @@ def index():
             group_name = summary.group_name
             r.set(f'group_name:{group_id}', group_name)
 
-        res += f'<a href="{group_id}">{group_name}</a> : {count[group_id][0] / count[group_id][1]:.0%}<br>'
-    return res
+        content += f'<a href="{group_id}">{group_name}</a> : {count[group_id][0]}회 {count[group_id][1]}명<br>\n'
+    return render_template('index.html', content=content)
 
 
 @app.route("/<gid>", methods=['GET', 'POST'])
@@ -64,7 +68,7 @@ def attendance(gid):
     if request.method == 'GET':
         month = f'{now.year}-{now.month:02d}'
     else:
-        month = request.form['month']
+        month = request.form['m']
 
     for key in r.scan_iter(match=f'{gid}:*:{month}', count=100):
         uid = key.split(':')[1]
