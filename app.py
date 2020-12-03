@@ -135,7 +135,9 @@ def handle_text_message(event):
     group_id, profile = get_profile(event)
 
     if any(tag in event.message.text for tag in ['#인증내역', '#인증현황']):
-        url = f'https://{request.host}/{group_id}'
+        now = datetime.now()
+        month = f'{now.year}-{now.month:02d}'
+        url = f'https://{request.host}/{group_id}?m={month}'
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
         return
 
