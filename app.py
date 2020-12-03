@@ -66,7 +66,7 @@ def attendance(gid):
     if month is None:
         now = datetime.now()
         month = f'{now.year}-{now.month:02d}'
-        return redirect(url_for('attendance', m=month))
+        return redirect(url_for('attendance', gid=gid, m=month))
 
     for key in r.scan_iter(match=f'{gid}:*:{month}', count=100):
         uid = key.split(':')[1]
