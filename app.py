@@ -55,8 +55,8 @@ def index():
             group_name = summary.group_name
             r.set(f'group_name:{group_id}', group_name)
 
-        content += f'<a href="{group_id}">{group_name}</a>({count[group_id][1]}) : {count[group_id][0]}회 인증<br>\n'
-    return render_template('index.html', content=content)
+        content += f'<a href="{group_id}?m={month}">{group_name}</a>({count[group_id][1]}) : {count[group_id][0]}회 인증<br>\n'
+    return render_template('index.html', content=content, month=month)
 
 
 @app.route("/<gid>")
