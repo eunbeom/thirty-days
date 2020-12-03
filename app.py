@@ -22,12 +22,10 @@ saved_year, saved_month, saved_holiday = 0, 0, []
 
 @app.route('/')
 def index():
-    now = datetime.now()
-
-    if request.method == 'GET':
+    month = request.args.get('m')
+    if month is None:
+        now = datetime.now()
         month = f'{now.year}-{now.month:02d}'
-    else:
-        month = request.form['m']
 
     keys = list()
     for key in r.scan_iter(match=f'C*:{month}', count=100):
@@ -60,15 +58,13 @@ def index():
     return render_template('index.html', content=content)
 
 
-@app.route("/<gid>", methods=['GET', 'POST'])
+@app.route("/<gid>")
 def attendance(gid):
     keys = []
-    now = datetime.now()
-
-    if request.method == 'GET':
+    month = request.args.get('m')
+    if month is None:
+        now = datetime.now()
         month = f'{now.year}-{now.month:02d}'
-    else:
-        month = request.form['m']
 
     for key in r.scan_iter(match=f'{gid}:*:{month}', count=100):
         uid = key.split(':')[1]
