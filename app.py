@@ -7,6 +7,7 @@ import redis as redis
 import requests
 from flask import Flask, request, json, render_template, redirect, url_for
 from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import LineBotApiError
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
     BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent, StickerMessage
 
@@ -51,7 +52,10 @@ def index():
     for group_id in count:
         group_name = r.get(f'group_name:{group_id}')
         if group_name is None:
-            summary = line_bot_api.get_group_summary(group_id)
+            try:
+                summary = line_bot_api.get_group_summary(group_id)
+            except LineBotApiError:
+                continue
             group_name = summary.group_name
             r.set(f'group_name:{group_id}', group_name)
 
