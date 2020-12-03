@@ -104,7 +104,9 @@ def handle_sticker_message(event):
         elif event.message.sticker_id == '356169384':
             check(event, group_id, profile, False)
         elif event.message.sticker_id == '356169385':
-            url = f'https://{request.host}/{group_id}'
+            now = datetime.now()
+            month = f'{now.year}-{now.month:02d}'
+            url = f'https://{request.host}/{group_id}?m={month}'
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=url))
         elif event.message.sticker_id == '356169386':
             check(event, group_id, profile, True, '#000000', '#ffffff')
