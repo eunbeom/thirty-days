@@ -20,7 +20,7 @@ r = redis.from_url(os.environ.get("REDIS_URL"), charset="utf-8", decode_response
 saved_year, saved_month, saved_holiday = 0, 0, []
 
 
-@app.route('/')
+@app.route('/', strict_slashes=False)
 def index():
     month = request.args.get('m')
     if month is None:
