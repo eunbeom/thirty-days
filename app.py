@@ -5,7 +5,7 @@ from datetime import datetime
 
 import redis as redis
 import requests
-from flask import Flask, request, json, render_template
+from flask import Flask, request, json, render_template, redirect, url_for
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, FlexSendMessage, TextSendMessage, \
     BubbleContainer, BoxComponent, TextComponent, FillerComponent, ImageComponent, StickerMessage
@@ -26,6 +26,7 @@ def index():
     if month is None:
         now = datetime.now()
         month = f'{now.year}-{now.month:02d}'
+        return redirect(url_for('index', m=month))
 
     keys = list()
     for key in r.scan_iter(match=f'C*:{month}', count=100):
@@ -65,6 +66,7 @@ def attendance(gid):
     if month is None:
         now = datetime.now()
         month = f'{now.year}-{now.month:02d}'
+        return redirect(url_for('attendance', m=month))
 
     for key in r.scan_iter(match=f'{gid}:*:{month}', count=100):
         uid = key.split(':')[1]
